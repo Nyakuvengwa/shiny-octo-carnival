@@ -30,11 +30,21 @@ func slicesAreReferences() {
 		"Nebula",
 	}
 
-	a := childrenOfThanos[0:4]
+	// a := childrenOfThanos[0:4]
 	b := childrenOfThanos[4:]
 	b[0], b[1] = b[1], "Gamora (deceased)"
-	fmt.Println(a, b)
-	greetAll(childrenOfThanos[:])
+	// fmt.Println(a, b)
+	// greetAll(childrenOfThanos[:])
+
+	s := childrenOfThanos[:0]
+	greetAll(s)
+
+	s = s[:4]
+	greetAll(s)
+
+	fmt.Println("Printing s[:4]")
+	s = s[4:] // this wont work. why?
+	greetAll(s)
 }
 
 func greetAll(people []string) {
