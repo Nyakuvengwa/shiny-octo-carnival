@@ -3,24 +3,35 @@ package main
 import (
 	"fmt"
 	"strings"
+
 	"golang.org/x/tour/pic"
 )
 
-func Pic(dx, dy int) [][]uint8 {
-	slice := make([][]uint8, dy)
+func main() {
+	c1 := counter(10)
+	c2 := counter(20)
 
-	for i := range slice {
-		slice[i] = make([]uint8, dx)
-		for j := range slice[i] {
-			slice[i][j] = uint8(i ^ j)
-		}
+	fmt.Println(c1()) // 11
+	fmt.Println(c1()) // 12
+	fmt.Println(c2()) // 21
+	fmt.Println(c1()) // 13
+
+	sumOfTwoNumber := func(number1, number2 int) int {
+		return number1 + number2
 	}
 
-	return slice
-}
+	fmt.Println(sumOfTwoNumber(1, 2))
 
-func main() {
-	pic.Show(Pic)
+	fmt.Println(exerciseSolutionMaps("I am learning Go"))
+
+	f := fibonacci()
+	for i := 0; i < 10; i++ {
+		fmt.Println(f())
+	}
+
+	mapMutation()
+	mappingFirstLook()
+	pic.Show(exerciseSolutionPic)
 	whatIsARange()
 	nilSlices()
 	slicesAreReferences()
@@ -32,9 +43,91 @@ func main() {
 	pointers()
 }
 
+func fibonacci() func() int {
+	a, b := 0, 1
+	return func() int {
+		a, b = b, a+b
+		return a
+	}
+}
+
+func counter(start int) func() int {
+	count := start
+	return func() int {
+		count++
+		return count
+	}
+}
+func exerciseSolutionMaps(s string) map[string]int {
+	result := make(map[string]int)
+
+	arrayOfStrings := strings.Split(s, " ")
+
+	for _, value := range arrayOfStrings {
+		_, isPresent := result[value]
+
+		if isPresent {
+			result[value]++
+		} else {
+			result[value] = 1
+		}
+
+	}
+
+	return result
+}
+
 type Vertex struct {
-	X int
-	Y int
+	Lat  float64
+	Long float64
+}
+
+func mapMutation() {
+	m := make(map[string]string)
+
+	m["Answer"] = "42"
+	fmt.Println("The value:", m["Answer"])
+
+	m["Answer"] = "48 is a number"
+	fmt.Println("The value:", m["Answer"])
+
+	delete(m, "Answer")
+	fmt.Println("The value:", m["Answer"])
+
+	v, ok := m["Answer"]
+	fmt.Println("The value:", v, "Present?", ok)
+}
+
+func mappingFirstLook() {
+	m := make(map[string]Vertex)
+	m["Bell Labs"] = Vertex{
+		40.68433, -74.39967,
+	}
+
+	m = map[string]Vertex{
+		"Bell Labs": {
+			40.68433, -74.39967,
+		},
+		"Google": {
+			37.42202, -122.08408,
+		},
+	}
+	fmt.Println(m["Bell Labs"])
+
+	fmt.Println(m)
+}
+
+func exerciseSolutionPic(dx, dy int) [][]uint8 {
+	slice := make([][]uint8, dy)
+
+	for i := range slice {
+		slice[i] = make([]uint8, dx)
+		for j := range slice[i] {
+			slice[i][j] = uint8(i ^ j)
+		}
+	}
+
+	return slice
 }
 
 func whatIsARange() {
@@ -116,10 +209,10 @@ func arrayMethods() {
 
 func structLiterals() {
 	var (
-		v1 = Vertex{1, 2}  // has type Vertex
-		v2 = Vertex{X: 1}  // Y:0 is implicit
-		v3 = Vertex{}      // X:0 and Y:0
-		p  = &Vertex{1, 2} // has type *Vertex
+		v1 = Vertex{1, 2}
+		v2 = Vertex{Lat: 1}
+		v3 = Vertex{}
+		p  = &Vertex{1, 2}
 	)
 
 	fmt.Println(v1, p, v2, v3)
@@ -128,7 +221,7 @@ func structLiterals() {
 func structAndPointers() {
 	v := Vertex{1, 2}
 	p := &v
-	p.X = 1.1e9
+	p.Lat = 1.1e9
 	fmt.Println(v)
 }
 
@@ -136,8 +229,8 @@ func structMethod() {
 	fmt.Println(Vertex{1, 2})
 
 	v := Vertex{1, 2}
-	v.X = 4
-	fmt.Println(v.X, v.Y)
+	v.Lat = 4
+	fmt.Println(v.Lat, v.Long)
 }
 
 func pointers() {
