@@ -1,6 +1,10 @@
 package main
 
-import "golang.org/x/tour/pic"
+import (
+	"fmt"
+	"strings"
+	"golang.org/x/tour/pic"
+)
 
 func Pic(dx, dy int) [][]uint8 {
 	slice := make([][]uint8, dy)
@@ -17,140 +21,130 @@ func Pic(dx, dy int) [][]uint8 {
 
 func main() {
 	pic.Show(Pic)
+	whatIsARange()
+	nilSlices()
+	slicesAreReferences()
+	sliceThemUp()
+	arrayMethods()
+	structLiterals()
+	structAndPointers()
+	structMethod()
+	pointers()
 }
 
-// before exercise
+type Vertex struct {
+	X int
+	Y int
+}
 
-// import (
-// 	"fmt"
-// 	"strings"
-// )
+func whatIsARange() {
+	var pow = []int{1, 2, 4, 8, 16, 32, 64, 128}
 
-// type Vertex struct {
-// 	X int
-// 	Y int
-// }
+	for i, v := range pow {
+		fmt.Printf("2**%d = %d\n", i, v)
+	}
+}
 
-// func main() {
-// 	whatIsARange()
-// 	nilSlices()
-// 	slicesAreReferences()
-// 	sliceThemUp()
-// 	arrayMethods()
-// 	structLiterals()
-// 	structAndPointers()
-// 	structMethod()
-// 	pointers()
-// }
+func nilSlices() {
+	var nilSlice []int
+	printSlice(nilSlice)
+	if nilSlice == nil {
+		fmt.Println("nil!")
+		nilSlice = append(nilSlice, 1)
+	}
+	printSlice(nilSlice)
+}
 
-// func whatIsARange() {
-// 	var pow = []int{1, 2, 4, 8, 16, 32, 64, 128}
+func printSlice(s []int) {
+	fmt.Printf("len=%d cap=%d %v\n", len(s), cap(s), s)
+}
+func slicesAreReferences() {
+	childrenOfThanos := [6]string{
+		"Ebony Maw",
+		"Proxima Midnight",
+		"Corvus Glaive",
+		"Cull Obsidian",
+		"Gamora",
+		"Nebula",
+	}
 
-// 	for i, v := range pow {
-// 		fmt.Printf("2**%d = %d\n", i, v)
-// 	}
-// }
+	// a := childrenOfThanos[0:4]
+	b := childrenOfThanos[4:]
+	b[0], b[1] = b[1], "Gamora (deceased)"
+	// fmt.Println(a, b)
+	// greetAll(childrenOfThanos[:])
 
-// func nilSlices() {
-// 	var nilSlice []int
-// 	printSlice(nilSlice)
-// 	if nilSlice == nil {
-// 		fmt.Println("nil!")
-// 		nilSlice = append(nilSlice, 1)
-// 	}
-// 	printSlice(nilSlice)
-// }
+	s := childrenOfThanos[:0]
+	greetAll(s)
 
-// func printSlice(s []int) {
-// 	fmt.Printf("len=%d cap=%d %v\n", len(s), cap(s), s)
-// }
-// func slicesAreReferences() {
-// 	childrenOfThanos := [6]string{
-// 		"Ebony Maw",
-// 		"Proxima Midnight",
-// 		"Corvus Glaive",
-// 		"Cull Obsidian",
-// 		"Gamora",
-// 		"Nebula",
-// 	}
+	s = s[:4]
+	greetAll(s)
 
-// 	// a := childrenOfThanos[0:4]
-// 	b := childrenOfThanos[4:]
-// 	b[0], b[1] = b[1], "Gamora (deceased)"
-// 	// fmt.Println(a, b)
-// 	// greetAll(childrenOfThanos[:])
+	fmt.Println("Printing s[:4]")
+	s = s[4:] // this wont work. why?
+	greetAll(s)
+}
 
-// 	s := childrenOfThanos[:0]
-// 	greetAll(s)
+func greetAll(people []string) {
+	for _, name := range people {
+		if strings.Contains(name, "deceased") {
+			fmt.Println("RIP", name)
+		} else {
 
-// 	s = s[:4]
-// 	greetAll(s)
+			fmt.Println("Hello,", name)
+		}
+	}
+}
 
-// 	fmt.Println("Printing s[:4]")
-// 	s = s[4:] // this wont work. why?
-// 	greetAll(s)
-// }
+func sliceThemUp() {
+	primes := [6]int{2, 3, 5, 7, 11, 13}
 
-// func greetAll(people []string) {
-// 	for _, name := range people {
-// 		if strings.Contains(name, "deceased") {
-// 			fmt.Println("RIP", name)
-// 		} else {
+	var firstSlice []int = primes[2:4]
+	fmt.Println(firstSlice)
+}
+func arrayMethods() {
+	var a [2]string
+	a[1] = "World"
+	a[0] = "Hello"
 
-// 			fmt.Println("Hello,", name)
-// 		}
-// 	}
-// }
+	fmt.Println(a[0], a[1])
+	fmt.Println(a)
 
-// func sliceThemUp() {
-// 	primes := [6]int{2, 3, 5, 7, 11, 13}
+	primes := [6]int{2, 3, 5, 7, 11, 13}
+	fmt.Println(primes)
+}
 
-// 	var firstSlice []int = primes[2:4]
-// 	fmt.Println(firstSlice)
-// }
-// func arrayMethods() {
-// 	var a [2]string
-// 	a[1] = "World"
-// 	a[0] = "Hello"
+func structLiterals() {
+	var (
+		v1 = Vertex{1, 2}  // has type Vertex
+		v2 = Vertex{X: 1}  // Y:0 is implicit
+		v3 = Vertex{}      // X:0 and Y:0
+		p  = &Vertex{1, 2} // has type *Vertex
+	)
 
-// 	fmt.Println(a[0], a[1])
-// 	fmt.Println(a)
+	fmt.Println(v1, p, v2, v3)
+}
 
-// 	primes := [6]int{2, 3, 5, 7, 11, 13}
-// 	fmt.Println(primes)
-// }
+func structAndPointers() {
+	v := Vertex{1, 2}
+	p := &v
+	p.X = 1.1e9
+	fmt.Println(v)
+}
 
-// func structLiterals() {
-// 	var (
-// 		v1 = Vertex{1, 2}  // has type Vertex
-// 		v2 = Vertex{X: 1}  // Y:0 is implicit
-// 		v3 = Vertex{}      // X:0 and Y:0
-// 		p  = &Vertex{1, 2} // has type *Vertex
-// 	)
+func structMethod() {
+	fmt.Println(Vertex{1, 2})
 
-// 	fmt.Println(v1, p, v2, v3)
-// }
+	v := Vertex{1, 2}
+	v.X = 4
+	fmt.Println(v.X, v.Y)
+}
 
-// func structAndPointers() {
-// 	v := Vertex{1, 2}
-// 	p := &v
-// 	p.X = 1.1e9
-// 	fmt.Println(v)
-// }
-
-// func structMethod() {
-// 	fmt.Println(Vertex{1, 2})
-
-// 	v := Vertex{1, 2}
-// 	v.X = 4
-// 	fmt.Println(v.X, v.Y)
-// }
-
-// func pointers() {
-// 	var p *int
-// 	i := 42
-// 	p = &i
-// 	fmt.Println(*p)
-// 	*p = *p / 2
-// 	fmt.Println(i)
-// }
+func pointers() {
+	var p *int
+	i := 42
+	p = &i
+	fmt.Println(*p)
+	*p = *p / 2
+	fmt.Println(i)
+}
